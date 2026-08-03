@@ -19,6 +19,27 @@
 
 石头把这些体验问题拆成了一套可运行的单用户 MVP，并以 iPhone PWA 作为主要使用形态。
 
+## 界面预览
+
+以下截图运行在完全虚构的演示数据上，不包含真实对话或个人信息。
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="./docs/assets/chat-demo.png" alt="移动端聊天页">
+      <br><sub>连续对话与熟人式回复</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="./docs/assets/persona-demo.png" alt="石头档案页">
+      <br><sub>稳定人格与可见记忆</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="./docs/assets/memory-detail-demo.png" alt="记忆详情面板">
+      <br><sub>记忆来源、编辑与删除</sub>
+    </td>
+  </tr>
+</table>
+
 ## 核心亮点
 
 ### 稳定但不过度拟人的角色系统
