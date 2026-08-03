@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f1ea" />
+    <title>石头还没开</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #f7f1ea;
+        color: #403832;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        min-height: 100vh;
+        min-height: 100dvh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: calc(28px + env(safe-area-inset-top)) 24px calc(28px + env(safe-area-inset-bottom));
+        background: radial-gradient(circle at 50% 22%, #fffaf5 0, #f7f1ea 58%, #efe5da 100%);
+      }
+
+      main {
+        width: min(100%, 360px);
+        padding: 28px 24px;
+        border: 1px solid rgba(116, 91, 70, 0.12);
+        border-radius: 24px;
+        background: rgba(255, 252, 248, 0.92);
+        box-shadow: 0 18px 48px rgba(92, 68, 49, 0.09);
+        text-align: center;
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        margin: 0 auto 18px;
+        border-radius: 50%;
+        background: #c5b6aa;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 24px;
+        line-height: 1.25;
+      }
+
+      p {
+        margin: 14px 0 22px;
+        color: #75685e;
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      button {
+        width: 100%;
+        min-height: 46px;
+        border: 0;
+        border-radius: 14px;
+        background: #d75c4a;
+        color: #fff;
+        font: inherit;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="dot" aria-hidden="true"></div>
+      <h1>石头还没开</h1>
+      <p id="retryStatus">先双击电脑桌面的“石头开关”，等窗口显示“石头已在线”，再回来重试。</p>
+      <button id="retryButton" type="button">再试一次</button>
+    </main>
+    <script>
+      const retryButton = document.querySelector("#retryButton");
+      const retryStatus = document.querySelector("#retryStatus");
+
+      retryButton.addEventListener("click", retryConnection);
+
+      async function retryConnection() {
+        retryButton.disabled = true;
+        retryButton.textContent = "正在连接…";
+        retryStatus.textContent = "正在确认石头有没有上线。";
+
+        try {
+          const retryToken = Date.now();
+          const response = await fetch(`/api/health?retry=${retryToken}`, {
+            cache: "no-store",
+          });
+          const payload = await response.json();
+
+          if (!response.ok || payload.ok !== true) {
+            throw new Error("private host unavailable");
+          }
+
+          if ("serviceWorker" in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map((registration) => registration.unregister()));
+          }
+
+          if ("caches" in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(
+              cacheNames
+                .filter((name) => name.startsWith("electronic-friend-pwa-"))
+                .map((name) => caches.delete(name)),
+            );
+          }
+
+          window.location.replace(`/?retry=${retryToken}`);
+        } catch {
+          retryStatus.textContent = "还是没连上。确认手机 Tailscale 已连接，再试一次。";
+          retryButton.disabled = false;
+          retryButton.textContent = "再试一次";
+        }
+      }
+    </script>
+  </body>
+</html>

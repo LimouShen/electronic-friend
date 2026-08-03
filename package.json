@@ -1,0 +1,18 @@
+{
+  "name": "electronic-friend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "npm run test:context && npm run test:memory && npm run test:memory-policy && npm run test:pwa && npm run test:backup",
+    "dev": "node apps/api/server.mjs",
+    "dev:api": "node apps/api/server.mjs",
+    "test:backup": "node apps/api/automatic-backup.test.mjs",
+    "test:context": "node apps/api/context-budget.test.mjs",
+    "test:memory": "node apps/api/memory-management.test.mjs",
+    "test:memory-policy": "node apps/api/memory-policy.test.mjs",
+    "test:pwa": "node apps/web/pwa.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>石头</title>
+    <meta name="description" content="私人电子挚友石头，移动优先的陪伴聊天空间。" />
+    <meta name="theme-color" content="#fff7ef" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="石头" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/assets/pwa-apple-touch-icon.png" />
+    <!-- STONE_INLINE_STYLES -->
+  </head>
+  <body>
+    <div
+      id="bootGuard"
+      role="status"
+      aria-live="polite"
+      style="position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:24px;background:#f7f2ec;color:#22201d;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-align:center"
+    >
+      <main>
+        <h1 style="margin:0 0 12px;font-size:24px">正在连接石头</h1>
+        <p id="bootGuardStatus" style="margin:0;color:#746d64;line-height:1.6">页面正在启动，请稍等。</p>
+        <button
+          id="bootGuardRetry"
+          type="button"
+          hidden
+          style="margin-top:20px;min-width:120px;height:44px;border:0;border-radius:8px;background:#d35d35;color:#fff;font:inherit"
+        >
+          重新加载
+        </button>
+      </main>
+    </div>
+    <div class="app-shell">
+      <aside class="side-nav" id="sideNav" aria-label="主导航">
+        <div class="nav-brand">
+          <strong>石头</strong>
+          <div class="nav-brand-actions">
+            <button class="install-button" type="button" id="installPwaButton" hidden>安装</button>
+            <button type="button" id="newConversationButton">新聊</button>
+          </div>
+        </div>
+        <nav class="nav-links">
+          <button class="nav-link active" type="button" data-page="chatPage">对话</button>
+          <button class="nav-link" type="button" data-page="personaPage">石头档案</button>
+          <button class="nav-link" type="button" data-page="settingsPage">设置</button>
+        </nav>
+
+        <section class="nav-history" aria-label="历史对话">
+          <div class="nav-history-header">
+            <span>历史对话</span>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </section>
+        <p class="nav-version">内测版 v0.1</p>
+      </aside>
+
+      <button class="nav-float-button" type="button" id="navToggleInline" aria-label="展开导航">☰</button>
+
+      <main class="page-shell">
+        <section class="page chat-page active" id="chatPage">
+          <header class="app-header">
+            <div class="title-row">
+              <div>
+                <h1 id="chatTitle">石头</h1>
+              </div>
+            </div>
+          </header>
+
+          <section class="messages" id="messages" aria-live="polite">
+            <article class="message assistant">
+              <p>来了，今天先从哪儿开始说？上班破事、帅哥八卦，还是单纯想骂两句。</p>
+            </article>
+          </section>
+
+          <form class="composer" id="composer">
+            <label class="sr-only" for="messageInput">给石头发消息</label>
+            <textarea
+              id="messageInput"
+              name="message"
+              rows="1"
+              autocomplete="off"
+              placeholder="跟石头说点什么..."
+            ></textarea>
+            <button type="submit" id="sendButton" aria-label="发送">↵</button>
+          </form>
+          <div class="message-context-menu" id="messageContextMenu" hidden>
+            <button type="button" data-message-action="copy">复制</button>
+            <button class="danger-text-button" type="button" data-message-action="delete">删除</button>
+            <button type="button" data-message-action="select">多选</button>
+          </div>
+          <div class="message-selection-bar" id="messageSelectionBar" hidden>
+            <span id="messageSelectionCount">已选择 0 条</span>
+            <div>
+              <button class="ghost-button danger-ghost-button" type="button" id="deleteSelectedMessagesButton">删除</button>
+              <button class="ghost-button" type="button" id="cancelMessageSelectionButton">取消</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page persona-page" id="personaPage">
+          <header class="content-header">
+            <div class="title-row">
+              <div>
+                <h1>石头的档案</h1>
+              </div>
+            </div>
+          </header>
+
+          <div class="persona-content">
+            <section class="mobile-persona-summary" aria-label="石头摘要">
+              <img
+                class="mobile-persona-portrait"
+                src="/assets/shitou-front-cutout.png?v=3"
+                width="470"
+                height="940"
+                loading="lazy"
+                decoding="async"
+                alt="石头形象"
+              />
+              <div class="mobile-persona-intro">
+                <div class="mobile-persona-name">
+                  <strong>石头</strong>
+                  <span>在线</span>
+                </div>
+                <div class="mobile-persona-chips" aria-label="石头标签">
+                  <span>23 岁</span>
+                  <span>电子损友</span>
+                  <span>护短</span>
+                  <span>爱开玩笑</span>
+                  <span>真诚</span>
+                </div>
+                <p>嘴欠，但心软。</p>
+              </div>
+            </section>
+            <section class="persona-profile">
+              <img
+                class="persona-portrait"
+                src="/assets/shitou-front-cutout.png?v=3"
+                width="470"
+                height="940"
+                loading="lazy"
+                decoding="async"
+                alt="石头形象"
+              />
+              <div class="profile-grid">
+                <article class="profile-block">
+                  <div class="profile-title-line">
+                    <h2>他是谁</h2>
+                    <h3>23 岁感的电子损友</h3>
+                  </div>
+                  <p>林石，外号石头。互联网在职打工人，年轻、嘴欠、会接梗，gay 朋友气质很明显，但不会把自己装成真人。</p>
+                </article>
+                <article class="profile-block">
+                  <div class="profile-title-line">
+                    <h2>说话方式</h2>
+                    <h3>短句、熟人感、低俗但收得住</h3>
+                  </div>
+                  <p>可以吐槽、接黄腔、问帅哥，也能在你情绪重的时候把玩笑收起来，不写报告，不端鸡汤。</p>
+                </article>
+                <article class="profile-block">
+                  <div class="profile-title-line">
+                    <h2>他对我的态度</h2>
+                    <h3>嘴上欠，实际上护短</h3>
+                  </div>
+                  <p>默认站在你这边，先接住，再看你要不要分析。记忆只用来更像熟朋友，不用来制造被监视感。</p>
+                </article>
+              </div>
+            </section>
+
+            <section class="memory-section">
+              <header class="section-header">
+                <div>
+                  <h2>石头的小本本</h2>
+                </div>
+                <p class="memory-count" id="memoryCount"></p>
+              </header>
+              <div class="memory-toolbar">
+                <label>
+                  <span class="sr-only">类型</span>
+                  <select id="memoryTypeFilter">
+                    <option value="">类型</option>
+                  </select>
+                </label>
+                <label>
+                  <span class="sr-only">状态</span>
+                  <select id="memoryStatusFilter">
+                    <option value="">状态</option>
+                    <option value="candidate">待观察</option>
+                    <option value="active">正使用</option>
+                    <option value="archived">已停用</option>
+                  </select>
+                </label>
+                <button class="ghost-button danger-ghost-button" type="button" id="clearMemoriesButton">清空记忆</button>
+              </div>
+              <div class="memory-workspace">
+                <div class="memory-list" id="memoryList"></div>
+                <div class="memory-detail-backdrop" id="memoryDetailBackdrop" hidden></div>
+                <aside class="memory-detail-panel" id="memoryDetailPanel" aria-label="记忆详情"></aside>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="page settings-page" id="settingsPage">
+          <header class="content-header">
+            <div class="title-row">
+              <div>
+                <h1>设置</h1>
+              </div>
+            </div>
+          </header>
+
+          <div class="settings-content">
+            <section class="settings-block">
+              <label class="setting-field">
+                <span>当前模型</span>
+                <div class="model-control-row">
+                  <span class="model-status-dot disconnected" id="modelStatusDot" aria-label="模型连接状态"></span>
+                  <select id="modelSelect"></select>
+                  <button type="button" id="saveModelButton">保存</button>
+                </div>
+              </label>
+            </section>
+
+            <section class="settings-block">
+              <h2>数据控制</h2>
+              <p>JSON</p>
+              <div class="data-control-list">
+                <button type="button" id="exportConversationsButton">
+                  <span>对话导出</span>
+                  <span aria-hidden="true">›</span>
+                </button>
+                <button type="button" id="exportMemoriesButton">
+                  <span>记忆导出</span>
+                  <span aria-hidden="true">›</span>
+                </button>
+                <button class="danger-row" type="button" id="clearMemoriesSettingsButton">
+                  <span>清空记忆</span>
+                  <span aria-hidden="true">›</span>
+                </button>
+              </div>
+            </section>
+            <button class="install-button settings-install-button" type="button" id="settingsInstallPwaButton" hidden>安装到手机</button>
+            <p class="pwa-status" id="pwaStatus" aria-live="polite"></p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div class="confirmation-overlay" id="confirmationOverlay" hidden>
+      <section class="confirmation-card" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle">
+        <h2 id="confirmationTitle">确认操作</h2>
+        <p id="confirmationMessage"></p>
+        <label class="confirmation-phrase-field" id="confirmationPhraseField" hidden>
+          <span id="confirmationPhraseHint"></span>
+          <input id="confirmationPhraseInput" type="text" autocomplete="off" />
+        </label>
+        <div class="confirmation-actions">
+          <button class="confirmation-cancel" type="button" id="confirmationCancelButton">取消</button>
+          <button type="button" id="confirmationConfirmButton">确认</button>
+        </div>
+      </section>
+    </div>
+    <div class="app-toast" id="appToast" hidden></div>
+
+    <script>
+      (function () {
+        var guard = document.getElementById("bootGuard");
+        var status = document.getElementById("bootGuardStatus");
+        var retry = document.getElementById("bootGuardRetry");
+
+        window.__stoneBootReady = function () {
+          if (guard) guard.remove();
+        };
+
+        window.__stoneBootProgress = function (message) {
+          if (guard && status && message) status.textContent = message;
+        };
+
+        window.__stoneBootFail = function (message) {
+          if (!guard || !status || !retry) return;
+          status.textContent = message || "页面没有启动成功，请重新加载。";
+          retry.hidden = false;
+        };
+
+        window.addEventListener("error", function (event) {
+          window.__stoneBootFail("页面启动失败：" + (event.message || "脚本没有正常运行"));
+        });
+
+        window.addEventListener("unhandledrejection", function (event) {
+          var reason = event.reason;
+          var message = reason && reason.message ? reason.message : String(reason || "连接失败");
+          window.__stoneBootFail("页面启动失败：" + message);
+        });
+
+        retry.addEventListener("click", function () {
+          window.location.reload();
+        });
+
+        window.setTimeout(function () {
+          if (document.getElementById("bootGuard")) {
+            var stage = status && status.textContent ? status.textContent : "页面启动";
+            window.__stoneBootFail(stage + " 已超过 20 秒。请重新加载后再试。");
+          }
+        }, 20000);
+      })();
+    </script>
+    <script>
+      (function () {
+        function retireLegacyWorkers() {
+          navigator.serviceWorker.getRegistrations()
+            .then(function (registrations) {
+              return Promise.all(registrations.map(function (registration) {
+                return registration.unregister();
+              }));
+            })
+            .catch(function () {
+              // iOS may leave this promise pending or reject it. Cleanup is best-effort
+              // and must never prevent the online app from starting.
+            });
+
+          if ("caches" in window) {
+            caches.keys()
+              .then(function (names) {
+                return Promise.all(names
+                  .filter(function (name) {
+                    return name.indexOf("electronic-friend-pwa-") === 0;
+                  })
+                  .map(function (name) {
+                    return caches.delete(name);
+                  }));
+              })
+              .catch(function () {
+                // A stale cache is less harmful than blocking the chat page.
+              });
+          }
+        }
+
+        window.__stoneBootProgress("正在载入聊天页面。");
+
+        if ("serviceWorker" in navigator) {
+          // Let the app become interactive first. Some iOS versions can leave
+          // getRegistrations() pending indefinitely even when no worker exists.
+          window.setTimeout(retireLegacyWorkers, 3000);
+        }
+      })();
+    </script>
+    <!-- STONE_INLINE_APP -->
+  </body>
+</html>
